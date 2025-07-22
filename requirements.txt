@@ -1,12 +1,10 @@
 gradio==4.27.0
 sentence-transformers
 faiss-cpu
-googletrans==4.0.0rc1
+deep-translator
 gtts
 requests
 numpy
-protobuf
-httpx==0.13.3
-httpcore==0.9.1
+protobuf<4
 transformers
 torch
