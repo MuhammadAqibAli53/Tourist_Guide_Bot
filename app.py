@@ -5,7 +5,7 @@ import logging
 from typing import List, Dict, Tuple, Optional
 import warnings
 warnings.filterwarnings("ignore")
-
+from deep_translator import GoogleTranslator
 # Core libraries
 import numpy as np
 import pandas as pd
@@ -179,20 +179,16 @@ class TouristGuideBot:
         
         logger.info(f"✅ Created knowledge base with {len(self.knowledge_base)} chunks")
     
+
+
     def translate_text(self, text: str, target_lang: str = "en", source_lang: str = "auto") -> str:
-        """Translate text using Google Translate."""
         try:
-            if source_lang == target_lang or target_lang == "en" and source_lang == "auto":
-                # Check if text is already in English
-                detected = self.translator.detect(text)
-                if detected.lang == "en":
-                    return text
-            
-            result = self.translator.translate(text, dest=target_lang, src=source_lang)
-            return result.text
+            translated = GoogleTranslator(source=source_lang, target=target_lang).translate(text)
+            return translated
         except Exception as e:
             logger.error(f"Translation error: {e}")
             return text
+
     
     def search_wikipedia(self, query: str, max_results: int = 3) -> List[str]:
         """Search Wikipedia for relevant travel information."""
