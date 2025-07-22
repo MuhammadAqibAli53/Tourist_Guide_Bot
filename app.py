@@ -450,7 +450,7 @@ custom_css = """
 /* Global styles */
 .gradio-container {
     font-family: 'Poppins', sans-serif !important;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    background: white !important;
     min-height: 100vh;
 }
 
