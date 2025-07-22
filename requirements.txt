@@ -1,7 +1,12 @@
-gradio==4.27.0
+gradio
 sentence-transformers
 faiss-cpu
-numpy
+gtts
 requests
+beautifulsoup4
+wikipedia
+pydub
+speechrecognition
 deep-translator
-git+https://github.com/ssut/py-googletrans.git
+groq
+google-generativeai
