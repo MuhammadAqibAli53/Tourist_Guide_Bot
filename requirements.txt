@@ -1,7 +1,7 @@
 gradio==4.27.0
 sentence-transformers
 faiss-cpu
-deep-translator
+googletrans==4.0.0rc1
 gtts
 requests
 numpy
