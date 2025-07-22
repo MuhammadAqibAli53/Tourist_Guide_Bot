@@ -1,10 +1,7 @@
 gradio==4.27.0
 sentence-transformers
 faiss-cpu
-googletrans==4.0.0rc1
-gtts
-requests
 numpy
-protobuf<4
-transformers
-torch
+requests
+deep-translator
+git+https://github.com/ssut/py-googletrans.git
