@@ -180,7 +180,6 @@ class TouristGuideBot:
         logger.info(f"✅ Created knowledge base with {len(self.knowledge_base)} chunks")
     
 
-
     def translate_text(self, text: str, target_lang: str = "en", source_lang: str = "auto") -> str:
         try:
             translated = GoogleTranslator(source=source_lang, target=target_lang).translate(text)
@@ -390,12 +389,9 @@ class TouristGuideBot:
             
             # Step 5: Create prompt for LLM
             prompt = f"""Based on the following context, please answer the user's travel question comprehensively and helpfully.
-
 Context:
 {context}
-
 User Question: {english_question}
-
 Please provide a detailed, helpful answer that combines information from the context. Focus on practical travel advice, recommendations, and useful tips. Keep the response informative but conversational."""
             
             # Step 6: Query LLM
@@ -446,117 +442,434 @@ def process_audio_input(audio, language, enable_tts):
     answer, audio_response = bot.answer_question(question, language, enable_tts)
     return f"Your question: {question}\n\nAnswer: {answer}", audio_response
 
-# Create Gradio interface
-def create_interface():
-    """Create the Gradio interface."""
+# Custom CSS for enhanced styling
+custom_css = """
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Global styles */
+.gradio-container {
+    font-family: 'Poppins', sans-serif !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    min-height: 100vh;
+}
+
+/* Main container styling */
+.main-container {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+    margin: 20px !important;
+    padding: 30px !important;
+}
+
+/* Header styling */
+.header-title {
+    text-align: center !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-size: 3rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 20px !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.subtitle {
+    text-align: center !important;
+    color: #555 !important;
+    font-size: 1.2rem !important;
+    margin-bottom: 30px !important;
+    line-height: 1.6 !important;
+}
+
+/* Feature list styling */
+.features-container {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%) !important;
+    border-radius: 15px !important;
+    padding: 20px !important;
+    margin: 20px 0 !important;
+    color: white !important;
+    text-align: center !important;
+}
+
+.features-title {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 15px !important;
+    color: white !important;
+}
+
+.feature-item {
+    display: inline-block !important;
+    margin: 5px 15px !important;
+    padding: 8px 16px !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 25px !important;
+    backdrop-filter: blur(5px) !important;
+    font-weight: 500 !important;
+}
+
+/* Control panel styling */
+.control-panel {
+    background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%) !important;
+    border-radius: 15px !important;
+    padding: 25px !important;
+    margin: 20px 0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Question prompt styling */
+.question-prompt {
+    text-align: center !important;
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+    margin: 30px 0 20px 0 !important;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%) !important;
+    padding: 20px !important;
+    border-radius: 15px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Tab styling */
+.tab-nav button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 10px 10px 0 0 !important;
+    padding: 12px 24px !important;
+    font-weight: 600 !important;
+    margin-right: 5px !important;
+    transition: all 0.3s ease !important;
+}
+
+.tab-nav button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+.tab-nav button.selected {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+/* Input styling */
+.gr-textbox, .gr-dropdown {
+    border: 2px solid #e1e8ed !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+.gr-textbox:focus, .gr-dropdown:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Button styling */
+.gr-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 12px 24px !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+}
+
+.gr-button:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
+}
+
+/* Output textbox styling */
+.output-textbox {
+    border: 2px solid #e1e8ed !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    min-height: 200px !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+    padding: 20px !important;
+}
+
+/* Audio component styling */
+.gr-audio {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Example questions styling */
+.examples-container {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%) !important;
+    border-radius: 15px !important;
+    padding: 25px !important;
+    margin: 30px 0 !important;
+    text-align: center !important;
+}
+
+.examples-title {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: #8B4513 !important;
+    margin-bottom: 15px !important;
+}
+
+.example-question {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border-radius: 20px !important;
+    padding: 10px 20px !important;
+    margin: 8px !important;
+    display: inline-block !important;
+    font-weight: 500 !important;
+    color: #8B4513 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+    transition: transform 0.2s ease !important;
+}
+
+.example-question:hover {
+    transform: translateY(-2px) !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .header-title {
+        font-size: 2rem !important;
+    }
     
-    with gr.Blocks(title="🌍 Multilingual Tourist Guide Bot", theme=gr.themes.Soft()) as demo:
+    .question-prompt {
+        font-size: 1.4rem !important;
+    }
+    
+    .feature-item {
+        display: block !important;
+        margin: 5px 0 !important;
+    }
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.gradio-container > div {
+    animation: fadeIn 0.6s ease-out !important;
+}
+"""
+
+# Create enhanced Gradio interface
+def create_interface():
+    """Create the enhanced Gradio interface."""
+    
+    with gr.Blocks(title="🌍 Multilingual Tourist Guide Bot", css=custom_css, theme=gr.themes.Base()) as demo:
         
-        gr.Markdown("""
-        # 🌍 Multilingual Tourist Guide Bot
-        
-        Your AI-powered travel companion that speaks your language! Get personalized travel advice, destination information, 
-        and travel tips using RAG technology and live web data.
-        
-        **Features:**
-        - 🗣️ Voice input and output
-        - 🌐 Support for 10+ languages
-        - 📚 Knowledge base + live web search
-        - 🎯 Personalized travel recommendations
-        """)
-        
+        # Header Section
         with gr.Row():
-            with gr.Column(scale=1):
+            with gr.Column():
+                gr.HTML("""
+                <div class="header-title">
+                    🌍 Multilingual Tourist Guide Bot
+                </div>
+                <div class="subtitle">
+                    Your AI-powered travel companion that speaks your language!<br>
+                    Get personalized travel advice, destination information, and travel tips using RAG technology and live web data.
+                </div>
+                """)
+        
+        # Features Section
+        with gr.Row():
+            with gr.Column():
+                gr.HTML("""
+                <div class="features-container">
+                    <div class="features-title">✨ Features</div>
+                    <div>
+                        <span class="feature-item">🗣️ Voice Input & Output</span>
+                        <span class="feature-item">🌐 10+ Languages Support</span>
+                        <span class="feature-item">📚 RAG Technology</span>
+                        <span class="feature-item">🎯 Personalized Recommendations</span>
+                    </div>
+                </div>
+                """)
+        
+        # Control Panel
+        with gr.Row():
+            with gr.Column(scale=1, elem_classes="control-panel"):
                 language_dropdown = gr.Dropdown(
                     choices=list(bot.languages.keys()),
                     value="English",
-                    label="🌐 Select Language",
-                    info="Choose your preferred language"
+                    label="🌐 Select Your Language",
+                    info="Choose your preferred language for communication",
+                    elem_classes="gr-dropdown"
                 )
                 
                 enable_tts_checkbox = gr.Checkbox(
                     value=True,
                     label="🔊 Enable Text-to-Speech",
-                    info="Generate audio response"
+                    info="Generate audio response for better accessibility",
+                    elem_classes="gr-checkbox"
                 )
-            
-            with gr.Column(scale=2):
-                gr.Markdown("### Ask your travel question in text or voice:")
         
+        # Question Prompt
+        with gr.Row():
+            with gr.Column():
+                gr.HTML("""
+                <div class="question-prompt">
+                    🎤 Ask your travel question in text or voice
+                </div>
+                """)
+        
+        # Input Tabs
         with gr.Tabs():
-            with gr.TabItem("💬 Text Input"):
+            with gr.TabItem("💬 Text Input", elem_classes="tab-item"):
                 with gr.Row():
-                    with gr.Column():
+                    with gr.Column(scale=1):
                         text_input = gr.Textbox(
-                            label="Your Travel Question",
-                            placeholder="Ask me anything about travel, destinations, tips, etc.",
-                            lines=3
+                            label="✍️ Your Travel Question",
+                            placeholder="Ask me anything about destinations, travel tips, local customs, best times to visit, budget advice, and more...",
+                            lines=4,
+                            elem_classes="gr-textbox"
                         )
-                        text_submit_btn = gr.Button("🚀 Get Answer", variant="primary")
+                        text_submit_btn = gr.Button("🚀 Get Travel Advice", variant="primary", size="lg")
                     
-                    with gr.Column():
-                        text_output = gr.Textbox(
-                            label="Answer",
-                            lines=8,
-                            show_copy_button=True
-                        )
-                        text_audio_output = gr.Audio(label="🔊 Audio Response")
-            
-            with gr.TabItem("🎤 Voice Input"):
+            with gr.TabItem("🎤 Voice Input", elem_classes="tab-item"):
                 with gr.Row():
-                    with gr.Column():
+                    with gr.Column(scale=1):
                         audio_input = gr.Audio(
                             sources=["microphone"],
                             type="filepath",
-                            label="🎤 Record Your Question"
+                            label="🎤 Record Your Travel Question",
+                            elem_classes="gr-audio"
                         )
-                        audio_submit_btn = gr.Button("🚀 Process Audio", variant="primary")
-                    
-                    with gr.Column():
-                        audio_text_output = gr.Textbox(
-                            label="Answer",
-                            lines=8,
-                            show_copy_button=True
-                        )
-                        audio_audio_output = gr.Audio(label="🔊 Audio Response")
+                        audio_submit_btn = gr.Button("🚀 Process Voice Question", variant="primary", size="lg")
         
-        # Example questions
-        gr.Markdown("""
-        ### 💡 Example Questions:
-        - "What are the best places to visit in Paris?"
-        - "Give me travel tips for first-time international travelers"
-        - "What's the best time to visit Japan?"
-        - "How can I save money while traveling in Europe?"
-        - "Tell me about local customs in Dubai"
-        """)
+        # Output Section
+        with gr.Row():
+            with gr.Column():
+                gr.HTML("""
+                <div style="text-align: center; font-size: 1.5rem; font-weight: 600; color: #333; margin: 30px 0 20px 0;">
+                    📋 Your Travel Guide Response
+                </div>
+                """)
         
-        # Event handlers
+        with gr.Row():
+            with gr.Column():
+                # Text outputs
+                text_output = gr.Textbox(
+                    label="💡 Travel Advice & Information",
+                    lines=12,
+                    max_lines=20,
+                    show_copy_button=True,
+                    elem_classes="output-textbox"
+                )
+                
+                audio_text_output = gr.Textbox(
+                    label="💡 Travel Advice & Information",
+                    lines=12,
+                    max_lines=20,
+                    show_copy_button=True,
+                    elem_classes="output-textbox",
+                    visible=False
+                )
+        
+        # Audio output section
+        with gr.Row():
+            with gr.Column(scale=1):
+                text_audio_output = gr.Audio(
+                    label="🔊 Audio Response",
+                    elem_classes="gr-audio"
+                )
+            with gr.Column(scale=1):
+                audio_audio_output = gr.Audio(
+                    label="🔊 Audio Response",
+                    elem_classes="gr-audio",
+                    visible=False
+                )
+        
+        # Example Questions Section
+        with gr.Row():
+            with gr.Column():
+                gr.HTML("""
+                <div class="examples-container">
+                    <div class="examples-title">💡 Try These Example Questions</div>
+                    <div>
+                        <div class="example-question">"What are the best places to visit in Paris?"</div>
+                        <div class="example-question">"Give me travel tips for first-time international travelers"</div>
+                        <div class="example-question">"What's the best time to visit Japan?"</div>
+                        <div class="example-question">"How can I save money while traveling in Europe?"</div>
+                        <div class="example-question">"Tell me about local customs in Dubai"</div>
+                        <div class="example-question">"Best budget-friendly destinations in Southeast Asia"</div>
+                        <div class="example-question">"What documents do I need for international travel?"</div>
+                    </div>
+                </div>
+                """)
+        
+        # Event handlers for text input
+        def handle_text_input(question, language, enable_tts):
+            """Handle text input and show/hide appropriate outputs."""
+            if not question.strip():
+                return "Please enter a question.", None, gr.update(visible=True), gr.update(visible=False)
+            
+            answer, audio = process_text_input(question, language, enable_tts)
+            return answer, audio, gr.update(visible=True), gr.update(visible=False)
+        
+        def handle_audio_input(audio, language, enable_tts):
+            """Handle audio input and show/hide appropriate outputs."""
+            if audio is None:
+                return "Please record an audio message.", None, gr.update(visible=False), gr.update(visible=True)
+            
+            answer, audio_response = process_audio_input(audio, language, enable_tts)
+            return answer, audio_response, gr.update(visible=False), gr.update(visible=True)
+        
+        # Connect event handlers
         text_submit_btn.click(
-            fn=process_text_input,
+            fn=handle_text_input,
             inputs=[text_input, language_dropdown, enable_tts_checkbox],
-            outputs=[text_output, text_audio_output]
+            outputs=[text_output, text_audio_output, text_output, audio_text_output]
         )
         
         audio_submit_btn.click(
-            fn=process_audio_input,
+            fn=handle_audio_input,
             inputs=[audio_input, language_dropdown, enable_tts_checkbox],
-            outputs=[audio_text_output, audio_audio_output]
+            outputs=[audio_text_output, audio_audio_output, text_output, audio_text_output]
         )
         
         # Auto-submit on Enter for text input
         text_input.submit(
-            fn=process_text_input,
+            fn=handle_text_input,
             inputs=[text_input, language_dropdown, enable_tts_checkbox],
-            outputs=[text_output, text_audio_output]
+            outputs=[text_output, text_audio_output, text_output, audio_text_output]
         )
+        
+        # Example question click handlers
+        def set_example_question(question):
+            return question
+        
+        # Footer with additional information
+        with gr.Row():
+            with gr.Column():
+                gr.HTML("""
+                <div style="text-align: center; margin-top: 40px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+                    <h3 style="margin-bottom: 15px;">🔑 Setup Instructions</h3>
+                    <p style="margin: 10px 0;"><strong>GROQ_API_KEY</strong> - For fast LLM responses via Groq API</p>
+                    <p style="margin: 10px 0;"><strong>GEMINI_API_KEY</strong> - For Google Gemini API access</p>
+                    <p style="margin: 10px 0; font-size: 0.9rem; opacity: 0.8;">Add these as environment variables for full functionality</p>
+                </div>
+                """)
     
     return demo
 
 # Launch the app
 if __name__ == "__main__":
-
     
-    print("🚀 Starting Tourist Guide Bot...")
+    print("🚀 Starting Enhanced Tourist Guide Bot...")
     print("📝 Note: Add your API keys as environment variables:")
     print("   - GROQ_API_KEY for Groq API")
     print("   - GEMINI_API_KEY for Google Gemini API")
@@ -564,5 +877,7 @@ if __name__ == "__main__":
     demo = create_interface()
     demo.launch(
         share=True,
-        show_error=True
+        show_error=True,
+        server_name="0.0.0.0",
+        server_port=7860
     )
