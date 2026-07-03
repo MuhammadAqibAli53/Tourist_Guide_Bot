@@ -29,7 +29,7 @@ import urllib.parse
 # Speech recognition
 import speech_recognition as sr
 from pydub import AudioSegment
-
+import librosa
 # LLM API clients
 import groq
 from google.generativeai import GenerativeModel
