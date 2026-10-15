@@ -1,27 +1,47 @@
 # Tourist Guide Bot
+### Multilingual AI · Information Retrieval · Speech Interfaces
 
-A multilingual tourism-assistance prototype built with Gradio, information retrieval, and optional LLM services.
+A travel-assistance prototype exploring how multilingual NLP, semantic retrieval, and external information sources can work together in a single user-facing application.
 
-## Features
-- Multi-language support including English and Urdu
-- Sentence Transformer embeddings and FAISS retrieval
-- Wikipedia and external web-data integrations
-- Translation, text-to-speech, and speech-recognition components
-- Optional Groq and Gemini integrations
+**Skills showcased:** Python · NLP · Retrieval Systems · LLM API Integration · Speech Processing · Data Integration · Gradio
 
-## Technology
-Python, Gradio, Sentence Transformers, FAISS, Groq, Google Gemini, gTTS, SpeechRecognition, and Wikipedia.
+## Engineering highlights
+| Challenge | Approach | Skill |
+|---|---|---|
+| Cross-language interaction | Language mappings and translation services | Internationalization, NLP |
+| Retrieve relevant knowledge | Multilingual Sentence Transformers with FAISS | Vector search |
+| Pull travel context | Wikipedia, requests, and Beautiful Soup integrations | Data retrieval |
+| Conversational generation | Optional Groq and Gemini clients through environment keys | LLM integration |
+| Voice accessibility | SpeechRecognition and gTTS components | Speech I/O |
+| Application UX | Gradio interface | AI product prototyping |
 
-## Setup
+## System overview
+```text
+User input (text / audio)
+       |
+Language processing / retrieval
+       |
+Knowledge sources + embedding search
+       |
+Optional generative model
+       |
+Text output / speech services
+```
+
+## Implementation details
+The project initializes a multilingual sentence embedding model and optionally configures LLM clients when the corresponding API keys are available. It integrates multiple external packages, so availability and behavior depend on the runtime environment and providers.
+
+## Tech stack
+Python, Gradio, Sentence Transformers, FAISS, Wikipedia, Groq, Gemini, Google translation tools, SpeechRecognition, gTTS.
+
+## Getting started
 ```bash
-python -m venv .venv
 pip install -r requirements.txt
 python app.py
 ```
-Activate the virtual environment before installing. Where applicable, set `GROQ_API_KEY` and `GEMINI_API_KEY` in the environment. Never commit credentials.
+Configure `GROQ_API_KEY` or `GEMINI_API_KEY` when using corresponding providers. Never commit credentials.
 
-## Notes
-This is a prototype; external APIs and internet data can change or become unavailable. Verify travel facts against current primary sources.
+## Limitations
+Travel information may be stale, external services may fail, and model outputs require verification. This is a prototype, not a certified travel-information service.
 
-## Maintainer
-[Muhammad Aqib Ali](https://github.com/MuhammadAqibAli53)
+**Maintained by [Muhammad Aqib Ali](https://github.com/MuhammadAqibAli53).**
